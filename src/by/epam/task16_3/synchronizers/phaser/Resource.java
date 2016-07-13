@@ -11,6 +11,10 @@ import java.util.concurrent.Phaser;
 public class Resource {
     private static final Logger logger = LogManager.getRootLogger();
 
+    /*
+    Создается объект Phaser со счетчиком равным 5, что означает кол-во
+    синхронизируемых потоков в определенных точках (фазах).
+     */
     private Phaser phaser = new Phaser(5);
 
     public void useResource() throws InterruptedException {
@@ -18,11 +22,21 @@ public class Resource {
         Thread.sleep(1000);
 
         logger.debug("Thread " + Thread.currentThread().getName() + " come to first point and wait");
+        /*
+        После выполнения части операции поток вызывает метод arriveAndAwaitAdvance(),
+        который блокирует поток до момента вызова этого же метода всеми остальными
+        потоками. После чего все потоки продолжают свою работу.
+         */
         phaser.arriveAndAwaitAdvance();
         logger.debug("Thread " + Thread.currentThread().getName() + " continue to use resource");
 
         Thread.sleep(1000);
         logger.debug("Thread " + Thread.currentThread().getName() + " come to second point and continue");
+        /*
+        После выполнения части операции поток вызывает метод arrive(), тем
+        самым сообщая о достижении определенной фазы, при этом поток не будет
+        блокирован и продолжит свою работу.
+         */
         phaser.arrive();
 
         Thread.sleep(1000);

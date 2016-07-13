@@ -12,6 +12,11 @@ import java.util.concurrent.Exchanger;
 public class Resource {
     private static final Logger logger = LogManager.getRootLogger();
 
+    /*
+    Создается объект Exchanger с параметризированным типом Integer, через
+    этот объект потки в последствии смоогут обмениваться ссылками на объекты
+    класса Integer в определенной синхронизируемой точке.
+     */
     private Exchanger<Integer> exchanger = new Exchanger<>();
 
     public void useResource() throws InterruptedException {
@@ -22,6 +27,11 @@ public class Resource {
         int valueToExchange = random.nextInt(10);
         logger.debug("Thread " + Thread.currentThread().getName() + " ready to exchange value " + valueToExchange);
 
+        /*
+        При вызове метода exchange() поток либо ожидает прибытия другого потока
+        для обмена данными, либо если второй поток уже ожидает производит
+        обмен ссылками на объекты класса Integer.
+         */
         int valueFromExchange = exchanger.exchange(valueToExchange);
         logger.debug("Thread " + Thread.currentThread().getName() + " get the exchange value " + valueFromExchange);
 
